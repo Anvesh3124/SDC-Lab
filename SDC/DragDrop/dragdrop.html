@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shape Matching Game</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+  }
+
+  .shapes-container {
+    width: 45%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .drop-container {
+    width: 45%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .shape {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .circle {
+    border-radius: 50%;
+    background-color: #ff6f61; /* Red */
+  }
+
+  .square {
+    background-color: #ffcc5c; /* Yellow */
+  }
+
+  .triangle {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 50px solid #77dd77; /* Green */
+  }
+
+  .shape:hover {
+    background-color: #cfcfcf;
+  }
+
+  .name {
+    margin-bottom: 10px;
+  }
+
+  .drop-box {
+    width: 100%;
+    height: 100px;
+    background-color: #cfcfcf;
+    border: 2px dashed #999;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .drop-box.hover {
+    background-color: #d9d9d9;
+  }
+
+  #score {
+    font-size: 24px;
+    margin-top: 20px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="shapes-container" id="shapes-container">
+  </div>
+  <div class="drop-container" id="drop-container">
+    <div class="name" id="circle-name">Circle</div>
+    <div class="drop-box" id="circle-drop" ondrop="drop(event, 'circle')" ondragover="allowDrop(event)"></div>
+    <div class="name" id="square-name">Square</div>
+    <div class="drop-box" id="square-drop" ondrop="drop(event, 'square')" ondragover="allowDrop(event)"></div>
+    <div class="name" id="triangle-name">Triangle</div>
+    <div class="drop-box" id="triangle-drop" ondrop="drop(event, 'triangle')" ondragover="allowDrop(event)"></div>
+  </div>
+</div>
+
+<div id="score">Score: <span id="score-value">0</span></div>
+
+<script>
+  var score = 0;
+
+  function allowDrop(event) {
+    event.preventDefault();
+    event.target.classList.add('hover');
+  }
+
+  function drag(event) {
+    event.dataTransfer.setData("shape", event.target.id);
+  }
+
+  function drop(event, expectedShape) {
+    event.preventDefault();
+    event.target.classList.remove('hover');
+    var shapeId = event.dataTransfer.getData("shape");
+    var draggedShape = document.getElementById(shapeId);
+    var dropId = event.target.id;
+
+    if (dropId === expectedShape + '-drop') {
+      if (shapeId === expectedShape) {
+        event.target.appendChild(draggedShape);
+        score++;
+        document.getElementById('score-value').textContent = score;
+        generateRandomShape();
+      } else {
+        // Incorrect match
+        alert("Wrong match! Try again.");
+      }
+    }
+  }
+
+  // Generate random shapes
+  function generateRandomShape() {
+    var shapes = ['circle', 'square', 'triangle'];
+    var randomIndex = Math.floor(Math.random() * shapes.length);
+    var randomShape = shapes[randomIndex];
+
+    var shapeDiv = document.createElement('div');
+    shapeDiv.className = 'shape ' + randomShape;
+    shapeDiv.id = randomShape;
+    shapeDiv.setAttribute('draggable', 'true');
+    shapeDiv.setAttribute('ondragstart', 'drag(event)');
+    document.getElementById('shapes-container').appendChild(shapeDiv);
+  }
+
+  generateRandomShape();
+</script>
+
+</body>
+</html>

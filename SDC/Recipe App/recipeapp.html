@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Application</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        #container {
+            width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        #search-form {
+            margin-bottom: 20px;
+        }
+
+        #recipe-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recipe {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .recipe:hover {
+            background-color: #f9f9f9;
+        }
+
+        #recipe-details {
+            margin-bottom: 20px;
+        }
+
+        #favorite-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .favorite-recipe {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .favorite-recipe:hover {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h2>Recipe Application</h2>
+
+        <div id="search-form">
+            <label for="recipe-search">Search for Recipes: </label>
+            <input type="text" id="recipe-search" placeholder="Enter a recipe">
+            <button onclick="searchRecipes()">Search</button>
+        </div>
+
+        <ul id="recipe-list"></ul>
+
+        <div id="recipe-details">
+            <!-- Recipe details will be displayed here -->
+        </div>
+
+        <h3>Favorites</h3>
+        <ul id="favorite-list"></ul>
+    </div>
+
+    <script>
+        const favoriteRecipes = [];
+
+        function searchRecipes() {
+            const searchInput = document.getElementById('recipe-search').value;
+            const recipeList = document.getElementById('recipe-list');
+            const recipeDetails = document.getElementById('recipe-details');
+
+            // Simulating recipe data (replace this with actual API call)
+            const recipes = [
+                { id: 1, name: 'Pasta Carbonara', ingredients: ['Pasta', 'Eggs', 'Bacon', 'Parmesan'], steps: 'Cook pasta, fry bacon, mix with eggs and Parmesan.' },
+                { id: 2, name: 'Chicken Stir-Fry', ingredients: ['Chicken', 'Vegetables', 'Soy Sauce'], steps: 'Stir-fry chicken and vegetables, add soy sauce.' },
+                {id: 3,name:"chicken biryani", ingredients: ["basmati rice","chicken","yogurt","biryani masala"],steps:"Rinse the basmati rice in cold water until the water runs clear. Soak the rice in water for 30 minutes, then drain.In a large pot, bring water to a boil. Add the soaked and drained rice along with some salt. Cook the rice until it is 70-80% cooked. Drain the water and set aside.In a separate pan, heat oil or ghee over medium heat. Add the sliced onions and fry until golden brown. Remove half of the fried onions for later use.In the same pan, add the ginger-garlic paste and sauté for a minute until the raw smell disappears.Add the chicken pieces to the pan and cook until they are browned on all sides.Stir in the chopped tomatoes, biryani masala, red chili powder, turmeric powder, and salt. Cook until the tomatoes are soft and the spices are well combined.Add the yogurt, chopped cilantro, and mint leaves. Mix well and cook for another 5-7 minutes until the chicken is tender.In a large heavy-bottomed pan, layer half of the partially cooked rice. Top it with the cooked chicken mixture, spreading it evenly.Add the remaining rice as the second layer. Sprinkle the reserved fried onions and whole spices on top.Cover the pan with a tight-fitting lid. Cook on low heat for 20-25 minutes, allowing the biryani to steam and the flavors to meld.Once cooked, gently fluff the rice with a fork, ensuring the chicken and rice are well mixed.Serve hot with raita or a side salad."},
+          { id: 4, name: 'vegetable soup', ingredients: ['olive oil','olive oil','carrots',' cloves garlic','potato',' green beans','Salt and pepper'],steps:"In a large pot, heat the olive oil over medium heat. Add the diced onion, carrots, celery, and minced garlic. Sauté for about 5 minutes or until the vegetables are softened.Add the diced potato, vegetable broth, diced tomatoes (with their juice), green beans, corn, dried thyme, and bay leaf to the pot. Stir well to combine.Bring the soup to a boil, then reduce the heat to low, cover the pot, and let it simmer for about 15-20 minutes or until the vegetables are tender.Season the soup with salt and pepper to taste. Adjust the seasonings according to your preference.Remove the bay leaf from the soup and discard it.Ladle the soup into bowls and garnish with fresh parsley if desired.Serve the vegetable soup hot, and you can accompany it with crusty bread or crackers."}
+
+
+                // Add more recipes as needed
+            ];
+
+            // Clear previous search results
+            recipeList.innerHTML = '';
+
+            // Display search results
+            recipes.forEach(recipe => {
+                if (recipe.name.toLowerCase().includes(searchInput.toLowerCase())) {
+                    const recipeItem = document.createElement('li');
+                    recipeItem.className = 'recipe';
+                    recipeItem.textContent = recipe.name;
+                    recipeItem.onclick = () => displayRecipeDetails(recipe);
+                    recipeList.appendChild(recipeItem);
+                }
+            });
+        }
+
+        function displayRecipeDetails(recipe) {
+            const recipeDetails = document.getElementById('recipe-details');
+            recipeDetails.innerHTML = `
+                <h3>${recipe.name}</h3>
+                <p><strong>Ingredients:</strong> ${recipe.ingredients.join(', ')}</p>
+                <p><strong>Steps:</strong> ${recipe.steps}</p>
+                <button onclick="saveFavorite(${recipe.id})">Save as Favorite</button>
+            `;
+        }
+
+        function saveFavorite(recipeId) {
+            const selectedRecipe = findRecipeById(recipeId);
+
+            if (selectedRecipe && !favoriteRecipes.includes(selectedRecipe)) {
+                favoriteRecipes.push(selectedRecipe);
+                updateFavoriteList();
+            }
+        }
+
+        function findRecipeById(recipeId) {
+            // Simulating recipe data (replace this with actual API call)
+            const recipes = [
+                { id: 1, name: 'Pasta Carbonara', ingredients: ['Pasta', 'Eggs', 'Bacon', 'Parmesan'], steps: 'Cook pasta, fry bacon, mix with eggs and Parmesan.' },
+                { id: 2, name: 'Chicken Stir-Fry', ingredients: ['Chicken', 'Vegetables', 'Soy Sauce'], steps: 'Stir-fry chicken and vegetables, add soy sauce.' },
+                 {id: 3,name:"chicken biryani", ingredients: ["basmati rice","chicken","yogurt","biryani masala"],steps:"Rinse the basmati rice in cold water until the water runs clear. Soak the rice in water for 30 minutes, then drain.In a large pot, bring water to a boil. Add the soaked and drained rice along with some salt. Cook the rice until it is 70-80% cooked. Drain the water and set aside.In a separate pan, heat oil or ghee over medium heat. Add the sliced onions and fry until golden brown. Remove half of the fried onions for later use.In the same pan, add the ginger-garlic paste and sauté for a minute until the raw smell disappears.Add the chicken pieces to the pan and cook until they are browned on all sides.Stir in the chopped tomatoes, biryani masala, red chili powder, turmeric powder, and salt. Cook until the tomatoes are soft and the spices are well combined.Add the yogurt, chopped cilantro, and mint leaves. Mix well and cook for another 5-7 minutes until the chicken is tender.In a large heavy-bottomed pan, layer half of the partially cooked rice. Top it with the cooked chicken mixture, spreading it evenly.Add the remaining rice as the second layer. Sprinkle the reserved fried onions and whole spices on top.Cover the pan with a tight-fitting lid. Cook on low heat for 20-25 minutes, allowing the biryani to steam and the flavors to meld.Once cooked, gently fluff the rice with a fork, ensuring the chicken and rice are well mixed.Serve hot with raita or a side salad."},
+                  { id: 4, name: 'vegetable soup', ingredients: ['olive oil','olive oil','carrots',' cloves garlic','potato',' green beans','Salt and pepper'],steps:"In a large pot, heat the olive oil over medium heat. Add the diced onion, carrots, celery, and minced garlic. Sauté for about 5 minutes or until the vegetables are softened.Add the diced potato, vegetable broth, diced tomatoes (with their juice), green beans, corn, dried thyme, and bay leaf to the pot. Stir well to combine.Bring the soup to a boil, then reduce the heat to low, cover the pot, and let it simmer for about 15-20 minutes or until the vegetables are tender.Season the soup with salt and pepper to taste. Adjust the seasonings according to your preference.Remove the bay leaf from the soup and discard it.Ladle the soup into bowls and garnish with fresh parsley if desired.Serve the vegetable soup hot, and you can accompany it with crusty bread or crackers."}
+
+                
+                // Add more recipes as needed
+            ];
+
+            return recipes.find(recipe => recipe.id === recipeId);
+        }
+
+        function updateFavoriteList() {
+            const favoriteList = document.getElementById('favorite-list');
+            favoriteList.innerHTML = '';
+
+            favoriteRecipes.forEach(recipe => {
+                const favoriteItem = document.createElement('li');
+                favoriteItem.className = 'favorite-recipe';
+                favoriteItem.textContent = recipe.name;
+                favoriteList.appendChild(favoriteItem);
+            });
+        }
+    </script>
+</body>
+</html>
